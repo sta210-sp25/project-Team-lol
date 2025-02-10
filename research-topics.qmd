@@ -1,6 +1,6 @@
 ---
 title: "Research Topics"
-author: "Team name - Team member 1, Team member 2, Team member 3, Team member 4"
+author: "Team lol - Tamsin Connerly, Hannah Lee, Jasmine Xiang"
 format: pdf
 execute: 
   warning: false
@@ -8,7 +8,23 @@ execute:
 editor: visual
 ---
 
+1.  A brief description of the topic
+
+2.  A statement about your motivation for investigating this topic
+
+3.  The potential audience(s), i.e., who might be most interested in this research?
+
+4.  Two or three potential research questions you could analyze about this topic. *(Note: These are draft questions at this point. You will finalize the questions in the next stage of the project.)*
+
+5.  Ideas about the type of data you might use to answer this question or potential data sets you’re interested in using. (*Note: The goal is to generate ideas at this point, so it is fine if you have not identified any particular data sets at this point.)*
+
 ## Research Topic 1
+
+1.  The MTA in New York City implemented congestion pricing on January 5, 2025 to attempt to decrease rush hour traffic especially in Manhattan and encourage people to use public transportation. The MTA releases data about the effects of congestion pricing (specifically, vehicle traffic at different hours) that we can use to perform some sort of data analysis. (<https://www.mta.info/article/most-detailed-view-of-nyc-traffic-so-far>)
+2.  Tamsin is motivated to investigate this topic because she worked at the Department of Transportation last summer and is going to work alongside the MTA next summer trying to figure out how to get people to use more public transportation. The rest of the group is interested in studying climate impact.
+3.  The potential audience for this is transportation officials, urban planners, and the general public because the Congestion Pricing is a big headline in the news right now.
+4.  Has congestion pricing significantly changed the hours at which vehicles enter Manhattan? Has congestion pricing significantly changed the average type of vehicle entering the congestion zone?
+5.  I would use the MTA Open Data platform (linked above).
 
 \pagebreak
 
