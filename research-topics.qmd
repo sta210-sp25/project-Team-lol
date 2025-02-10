@@ -33,3 +33,9 @@ editor: visual
 \pagebreak
 
 ## Research Topic 3
+
+1.  Ever since the COVID-19 outbreak, a growing number of adults and children have been experiencing depression and anxiety. Although there are widespread mental health impacts from the pandemic, some people are more likely to be impacted than others, depending on a variety of factors such as mothers, people from different ethnic or racial groups, or healthcare workers. This dataset from Kaggle (<https://www.kaggle.com/datasets/divaniazzahra/mental-health-dataset/data>) contains a variety of different variables that we could look at and perform data analysis.
+2.  Hannah is motivated to investigate this topic because she is passionate about mental health and is a volunteer crisis counselor for the national crisis text line. The rest of the group is interested in different variables that might make certain individuals more likely to be impacted.
+3.  The potential audience for this is mental health experts who may be interested in any trends in mental health, as well as anyone interested in spreading awareness about mental health and making resources more accessible to vulnerable populations.
+4.  Are there specific regions that have more individuals that experience more mental health impacts? What variable has the greatest impact on making individuals more likely to experience mental health impacts?
+5.  I would use the dataset linked above.
