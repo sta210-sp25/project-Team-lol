@@ -30,19 +30,15 @@ editor: visual
 
 ## Research Topic 2
 
-1.  Air pollution is a growing concern in urban areas and has implications for public health and quality of life. This project can examine whether air pollution levels influence housing prices, potentially revealing insights into the cost of environmental degradation.
+1.  Air pollution is a growing concern in urban areas and has implications for public health and quality of life. Air pollution levels may greatly influences housing prices. Research in this could potentially reveal some insights into the cost of environmental degradation. This dataset from kaggle (<https://www.kaggle.com/datasets/epa/epa-historical-air-quality>) contains a vast collection of air quality data collected from ambient air monitoring sites across the country.
 
 2.  Jasmine have taken en environmental data analysis course last semester and learned that urban citizens have been facing significant health risks for a long time bacause of the air pollution. She is wiling to figure out whether real estate prices could reflect people's willingness to pay for cleaner environments.
 
 3.  Environmental economists, real estate developers and agents, and even urban planners and policymakers may be potential audience of this project.
 
-4.  Reseach questions:
+4.  How do varying air pollution levels across neighborhoods affect housing prices? Do wealthier neighborhoods show more resistance to the negative effects of air pollution on property values?
 
-    a\. How do varying air pollution levels across neighborhoods affect housing prices?
-
-    b\. Do wealthier neighborhoods show more resistance to the negative effects of air pollution on property values?
-
-5.  I would use Air quality data from sites of air quality system.
+5.  I would use Air quality data linked above.
 
 \pagebreak
 
