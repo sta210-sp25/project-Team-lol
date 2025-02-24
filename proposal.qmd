@@ -12,7 +12,6 @@ editor: visual
 #| label: load-pkg-data
 library(tidyverse)
 library(tidymodels)
-# add other packages as needed
 
 traffic <- read.csv("data/MTA_Congestion_Relief_Zone_Vehicle_Entries__Beginning_2025_20250224.csv")
 ```
