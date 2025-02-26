@@ -13,7 +13,7 @@ editor: visual
 library(tidyverse)
 library(tidymodels)
 
-traffic <- read.csv("data/MTA_Congestion_Relief_Zone_Vehicle_Entries__Beginning_2025_20250224.csv")
+airbnb <- read.csv("data/NYC-Airbnb-2023.csv")
 ```
 
 ## Introduction
