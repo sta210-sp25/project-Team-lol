@@ -51,8 +51,52 @@ Based on existing literature and our understanding of the New York City housing 
 
 ## Analysis approach
 
-...
+**Potential Predictor Variables of Interest:**
+
+Our potential predictors capture many key aspects of Airbnb listings — space, amenities, perceived quality, and location—that are likely to have significant influence on nightly rates.
+
+-   Number of Bedrooms (quantitative): Reflects the amount of sleeping space in a listing. We anticipate more bedrooms generally commanding higher prices.
+
+-   Number of Bathrooms (quantitative): Indicates the level of comfort/convenience. Listings with more bathrooms are typically priced higher.
+
+-   Accommodation Capacity (quantitative): Represents how many guests can stay in the listing. We expect larger capacity to have higher nightly rates.
+
+-   Room Type (categorical): Classified primarily as “Entire home/apt,” “Private room,” or “Shared room.” We plan to use one-hot encoding, as room type strongly affects price (entire units usually cost more).
+
+-   Review Scores (quantitative): Represents overall rating (on a typical 1–5 scale, or 1–100 in some datasets). Higher-rated listings may set premium prices.
+
+-   Distance from City Center (quantitative): Measures proximity to major landmarks or downtown areas. We expect closer listings to charge higher prices.
+
+**Regression model technique:**
+
+Our responsible variable is price, which is a continuous variable, and we will employ a Multiple Linear Regression model to estimate the effect of each predictor on price while controlling for the others.
+
+Model specification:
+
+$$
+Price = \beta_0 + \beta_1(Bedrooms) + \beta_2(Bathrooms) + ... + \epsilon
+$$
+
+Assumption checking:
+
+-   Linearity: The relationship between predictors and our response variable price should be approximately linear.
+
+-   **I**ndependence of Residuals: We assume each listing is an independent observation.
+
+-   Homoscedasticity: Residuals should have constant variance across all fitted values.
+
+-   Normality of Residuals: Residuals should be roughly normally distributed.
+
+Model evaluation:
+
+In evaluating our MLR model, we will begin by examining the R² and Adjusted R² value. They can help us understand how well the model explains the variability in price while adjusting for the number of predictors used. We will also look at p-values for each predictor, which will indicate which variables have a significant impact on the listing’s price.
+
+Feature engineering:
+
+Depending on the distribution of our predictors and response variable, we may consider examining the potential for interaction terms, particularly if we hypothesize that the effect of one variable depends on another. For example, the impact of accommodating additional guests may differ significantly if the listing is an entire home versus a private room.
+
+In addition, we plan to carefully encode categorical variables, such as Room Type, using dummy variables. This will allow the model to compare and contrast distinct categories effectively. We plan to capture the detailed relationships among our features, thus producing more robust, interpretable insights into Airbnb pricing.
 
 ## Data dictionary
 
-The data dictionary can be found [here](ADD%20LINK!!!) \[Update the link and remove this note!\]
+The data dictionary can be found [here](data/README.md).
