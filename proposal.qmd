@@ -111,7 +111,6 @@ From the initial histogram, since the majority of the listings seem to fall betw
 
 ## Analysis approach
 
-...
 **Potential Predictor Variables of Interest:**
 
 Our potential predictors capture many key aspects of Airbnb listings — space, amenities, perceived quality, and location—that are likely to have significant influence on nightly rates.
