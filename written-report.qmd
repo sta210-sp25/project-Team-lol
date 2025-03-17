@@ -39,6 +39,8 @@ Based on existing literature and our understanding of the New York City housing 
 
 -   Properties closer to the city center will be priced higher due to their convenient location and proximity to attractions.
 
+-   Properties in more affluent neighborhoods like Manhattan will have higher prices compared to less affluent ones like the Bronx because of real estate price differences in each borough.
+
 ## Exploratory Data Analysis
 
 The Airbnb dataset that we are utilizing can be found on Inside Airbnb (<https://insideairbnb.com/>). Inside Airbnb has collected data on dozens of countries and cities, but we decided to focus on New York City. The data was sourced from publicly available data on the Airbnb website on March 1, 2025.
@@ -61,10 +63,14 @@ Each row in the dataset represents a unique Airbnb listing in New York City. Eac
 
     -   Proximity to central locations can impact pricing (since it is more convenient and desirable)
 
+-   Neighborhood
+
+    -   Which New York City Neighborhood the Airbnb is located in. More affluent neighborhoods like Manhattan may have higher prices than neighborhoods like the Bronx.
+
 ### Response Variable - Price
 
 ```{r}
-#| label: visualization
+#| label: visualization-01
 #| echo: false
 
 # histogram looks small because of the one outlier at 99k
