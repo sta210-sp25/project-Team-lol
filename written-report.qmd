@@ -16,7 +16,7 @@ editor: visual
 library(tidyverse)
 library(tidymodels)
 
-airbnb <- read.csv("data/NYC-Airbnb-2023.csv")
+airbnb <- read.csv("data/listings.csv")
 ```
 
 ## Introduction
