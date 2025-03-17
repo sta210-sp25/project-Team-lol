@@ -61,6 +61,8 @@ Each row in the dataset represents a unique Airbnb listing in New York City. Eac
 
     -   Proximity to central locations can impact pricing (since it is more convenient and desirable)
 
+### Response Variable - Price
+
 ```{r}
 #| label: visualization
 #| echo: false
@@ -99,3 +101,5 @@ ggplot(airbnb, aes(x = price)) +
 ```
 
 From the initial histogram, since the majority of the listings seem to fall between 0 and 2500 dollars, we visualized the distribution of the listings between this price range to get a better view of it. We can see that the distribution is still right skewed, and the vast majority of the listings seem to cost between \$50-\$200. There are a few more points visible that were not in the initial histogram that appear to be quite far from where the majority of the listings are clustered, so we will go back and check to see if they are greater than 1.5 x IQR and can be classified as outliers. We also plan to apply log transformation to this variable to address the skew of the response variable.
+
+### Predictor Variable - Review Scores
