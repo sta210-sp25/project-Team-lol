@@ -43,6 +43,31 @@ Based on existing literature and our understanding of the New York City housing 
 
 -   The impact of these factors on price may vary across different boroughs or neighborhoods.
 
+The Airbnb dataset that we are utilizing can be found on Kaggle, but the author of the dataset obtained the data from Inside Airbnb (<https://insideairbnb.com/>). Inside Airbnb has collected data on dozens of countries and cities, but we decided to focus on New York City. The data was sourced from publicly available data on the Airbnb website in 2023.
+
+\
+Each row in the dataset represents a unique Airbnb listing in New York City. Each of these correspond to individual properties available for rental on the platform and have many (18) variables such as name of the listing, latitude and longitude, room type, price, minimum number of nights required for booking, total number of reviews the listing has reviewed, and more. We are particularly interested in the following explanatory variables that we believe could impact the price of an Airbnb listing:
+
+-   Number of bedrooms and bathrooms
+
+    -   These could give insights into the size and comfort level of the Airbnb, likely affecting the price.
+
+-   Accommodation capacity (number of guests)
+
+    -   This could influence pricing as larger accommodations can host more guests.
+
+-   Room type
+
+    -   Type of room (whether the listing is an entire home/apartment or a private room) can impact pricing
+
+-   Review scores (overall rating)
+
+    -   Listings with better or higher number of reviews could be priced higher because of higher perceived value and trustworthiness
+
+-   Distance from city center
+
+    -   Proximity to central locations can impact pricing (since it is more convenient and desirable)
+
 ::: callout-important
 Before you submit, make sure your code chunks are turned off with `echo: false` and there are no warnings or messages with `warning: false` and `message: false` in the YAML.
 :::
