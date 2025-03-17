@@ -15,6 +15,7 @@ editor: visual
 
 library(tidyverse)
 library(tidymodels)
+library(knitr)
 
 airbnb <- read.csv("data/listings.csv")
 ```
@@ -43,7 +44,7 @@ Based on existing literature and our understanding of the New York City housing 
 
 The Airbnb dataset that we are utilizing can be found on Inside Airbnb (<https://insideairbnb.com/>). Inside Airbnb has collected data on dozens of countries and cities, but we decided to focus on New York City. The data was sourced from publicly available data on the Airbnb website on March 1, 2025.
 
-Each row in the dataset represents a unique Airbnb listing in New York City. Each of these correspond to individual properties available for rental on the platform and have many (53) variables such as name of the listing, latitude and longitude, room type, price, minimum number of nights required for booking, total number of reviews the listing has reviewed, and more. We are particularly interested in the following explanatory variables that we believe could impact the price of an Airbnb listing:
+Each row in the dataset represents a unique Airbnb listing in New York City. Each of these correspond to individual properties available for rental on the platform and have many (58) variables such as name of the listing, latitude and longitude, room type, price, minimum number of nights required for booking, total number of reviews the listing has reviewed, and more. We are particularly interested in the following explanatory variables that we believe could impact the price of an Airbnb listing:
 
 -   Number of bedrooms
 
@@ -183,4 +184,45 @@ ggplot(airbnb, aes(x = review_scores_rating, y = price)) +
   theme_minimal()
 ```
 
-### 
+## Interaction Effects
+
+### Bedrooms and Room Type
+
+```{r}
+#| label: figure-12
+#| warning: FALSE
+#| echo: FALSE
+
+airbnb_log <- airbnb |>
+  mutate(log_price = log(price))
+
+airbnb_log |>
+  ggplot(aes(x = bedrooms, y = log(price), color = room_type)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Log Price vs. Bedrooms by Room Type",
+       x = "Number of Bedrooms",
+       y = "Log Price (log($))",
+       color = "Type of Room")
+```
+
+Based on the graph, it appears that the rate at which price increases per number of bedrooms varies across room types. The slope of the shared room especially seems to differ from the others. Thus, there may be an interaction effect here.
+
+### Bedrooms and Neighborhood
+
+```{r}
+#| label: figure-13
+#| warning: FALSE
+#| echo: false
+
+airbnb_log |>
+  ggplot(aes(x = bedrooms, y = log(price), color = neighbourhood_group_cleansed)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Log Price vs. Bedrooms by Neighborhood",
+       x = "Number of Bedrooms",
+       y = "Log Price (log($))",
+       color = "Neighborhood")
+```
+
+Based on the graph visually, it appears that the rate at which price increases per bedroom does not greatly vary based on neighborhood, especially compared to the previous graph by room type. Staten Island does have a noticeably different slope, though. Thus, there is a potential for an interaction effect between bedroom number and neighborhood, but not as much as the previous graph with bedroom and room type.
