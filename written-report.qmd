@@ -31,17 +31,13 @@ Understanding the determinants of Airbnb pricing in New York City is crucial for
 
 Based on existing literature and our understanding of the New York City housing market, we hypothesize that:
 
--   Listings with more bedrooms and bathrooms will command higher prices, reflecting the premium placed on space in urban environments.
-
--   The number of guests a property can accommodate will positively correlate with price, as larger groups often have higher budgets.
+-   Listings with more bedrooms will command higher prices, reflecting the premium placed on space in urban environments.
 
 -   The type of room (entire home/apartment vs. private room) will significantly impact pricing, with entire homes/apartments having a higher price.
 
 -   Higher review scores will be associated with higher prices, as positive feedback may justify premium pricing.
 
 -   Properties closer to the city center will be priced higher due to their convenient location and proximity to attractions.
-
--   The impact of these factors on price may vary across different boroughs or neighborhoods.
 
 ## Exploratory Data Analysis
 
