@@ -61,6 +61,8 @@ Each row in the dataset represents a unique Airbnb listing in New York City. Eac
 
     -   Which New York City Neighborhood the Airbnb is located in. More affluent neighborhoods like Manhattan may have higher prices than neighborhoods like the Bronx.
 
+## Univariate Exploratory Data Analysis
+
 ### Response Variable - Price
 
 ```{r}
@@ -137,7 +139,7 @@ ggplot(data = airbnb, aes(x = review_scores_rating)) +
   geom_histogram() +
   labs(title = "Distribution of Average Airbnb Review Scores in New York City", 
        x = "Average Review Score (out of 5.0)", 
-       y = "Count") 
+       y = "Count")
 ```
 
 ```{r}
@@ -156,3 +158,29 @@ summary_tibble3
 ### Predictor Variable - Room Type
 
 ### Predictor Variable - Neighborhood
+
+## Bivariate Exploratory Data Analysis
+
+### Response (Price) vs Predictor Variable (number of prices)
+
+```{r}
+#| label: figure-10
+
+ggplot(airbnb, aes(x = bedrooms, y = price)) +
+  geom_point() +
+  labs(title = "Price vs. Number of Bedrooms", x = "Number of Bedrooms", y = "Price") +
+  theme_minimal()
+```
+
+### Response (Price) vs Predictor Variable (review scores)
+
+```{r}
+#| label: figure-11
+
+ggplot(airbnb, aes(x = review_scores_rating, y = price)) +
+  geom_point() +
+  labs(title = "Price vs. Review Scores Rating", x = "Review Scores Rating", y = "Price") +
+  theme_minimal()
+```
+
+### 
