@@ -83,7 +83,7 @@ ggplot(data = airbnb, aes(x = price)) +
 ```
 
 ```{r}
-#| label: summary-stats
+#| label: figure-02
 summary_stats <- summary(airbnb$price)
 
 summary_tibble <- tibble(
@@ -94,9 +94,10 @@ summary_tibble <- tibble(
 summary_tibble
 ```
 
-The distribution is pretty heavily right skewed, as can be seen from both of the histograms. It is difficult to analyze the distribution in the first histogram because there is an outlier at \$99,000 and makes the bins and binwidth very narrow and zoomed out (since the range of the data is too large). It is also clear that this outlier impacts the mean, since the median of \$125 is quite a bit less than the mean of \$200.37, and the mean is roughly equal to the 3rd quartile which is also around \$200. We plan to to remove this outlier as a result when doing our analysis, and we will go into more depth later and check for additional outliers.
+The distribution is pretty heavily right skewed, as can be seen from both of the histograms. It is difficult to analyze the distribution in the first histogram because there is an outlier at \$20,000 and makes the bins and binwidth very narrow and zoomed out (since the range of the data is too large). It is also clear that this outlier impacts the mean, since the median of \$140 is quite a bit less than the mean of around \$213.84, and the mean is roughly equal to the 3rd quartile which is also around \$240. We plan to to remove this outlier as a result when doing our analysis, and we will go into more depth later and check for additional outliers.
 
 ```{r}
+#| label: figure-03
 # set x axis ranges to get closer look at dist
 ggplot(airbnb, aes(x = price)) +
   geom_histogram(bins = 30) +
@@ -108,4 +109,56 @@ ggplot(airbnb, aes(x = price)) +
 
 From the initial histogram, since the majority of the listings seem to fall between 0 and 2500 dollars, we visualized the distribution of the listings between this price range to get a better view of it. We can see that the distribution is still right skewed, and the vast majority of the listings seem to cost between \$50-\$200. There are a few more points visible that were not in the initial histogram that appear to be quite far from where the majority of the listings are clustered, so we will go back and check to see if they are greater than 1.5 x IQR and can be classified as outliers. We also plan to apply log transformation to this variable to address the skew of the response variable.
 
+### Predictor Variable - Bedrooms
+
+```{r}
+#| label: figure-04
+
+ggplot(data = airbnb, aes(x = bedrooms)) +
+  geom_histogram(bins = 25) +
+  labs(title = "Distribution of Number of Airbnb Bedrooms in New York City", 
+       x = "Number of Bedrooms", 
+       y = "Count") 
+```
+
+```{r}
+#| label: figure-05
+
+summary_stats2 <- summary(airbnb$bedrooms)
+
+summary_tibble2 <- tibble(
+  Statistic = names(summary_stats2),
+  Value = summary_stats2
+)
+
+summary_tibble2
+```
+
 ### Predictor Variable - Review Scores
+
+```{r}
+#| label: figure-06
+
+ggplot(data = airbnb, aes(x = review_scores_rating)) +
+  geom_histogram() +
+  labs(title = "Distribution of Average Airbnb Review Scores in New York City", 
+       x = "Average Review Score (out of 5.0)", 
+       y = "Count") 
+```
+
+```{r}
+#| label: figure-07
+
+summary_stats3 <- summary(airbnb$review_scores_rating)
+
+summary_tibble3 <- tibble(
+  Statistic = names(summary_stats3),
+  Value = summary_stats3
+)
+
+summary_tibble3
+```
+
+### Predictor Variable - Room Type
+
+### Predictor Variable - Neighborhood
