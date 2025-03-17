@@ -25,7 +25,7 @@ The rise of short-term rental platforms, particularly Airbnb, has significantly 
 
 Previous research has identified several factors that impact Airbnb pricing. One study found that host attributes, site and property attributes, amenities and services, rental rules, and online review ratings all play significant roles in determining listing prices [@wang2017]. Furthermore, recent studies have provided evidence of Airbnb's influence on housing markets. Another study found that a 1% increase in Airbnb listings leads to a 0.018% increase in rents and a 0.026% increase in house prices [@barron2018]. This effect is more pronounced in areas with a lower share of owner-occupiers, suggesting that non-owner-occupiers are more likely to reallocate their properties from long-term to short-term rentals.
 
-Our research question is: "How do various factors, such as bedroom/bathroom number, accommodation capacity, room type, review scores, and distance from city center, influence the price of Airbnb listings in New York City?" 
+Our research question is: "How do various factors, such as bedroom number, room type, review scores, and distance from city center, influence the price of Airbnb listings in New York City?" 
 
 Understanding the determinants of Airbnb pricing in New York City is crucial for several reasons. Firstly, it can provide valuable insights for policymakers grappling with the challenges posed by the growth of short-term rentals, including potential impacts on housing affordability and neighborhood character [@toader2021]. Secondly, it can help hosts make more informed pricing decisions, potentially leading to more efficient market outcomes.
 
@@ -45,16 +45,11 @@ Based on existing literature and our understanding of the New York City housing 
 
 The Airbnb dataset that we are utilizing can be found on Kaggle, but the author of the dataset obtained the data from Inside Airbnb (<https://insideairbnb.com/>). Inside Airbnb has collected data on dozens of countries and cities, but we decided to focus on New York City. The data was sourced from publicly available data on the Airbnb website in 2023.
 
-\
 Each row in the dataset represents a unique Airbnb listing in New York City. Each of these correspond to individual properties available for rental on the platform and have many (18) variables such as name of the listing, latitude and longitude, room type, price, minimum number of nights required for booking, total number of reviews the listing has reviewed, and more. We are particularly interested in the following explanatory variables that we believe could impact the price of an Airbnb listing:
 
--   Number of bedrooms and bathrooms
+-   Number of bedrooms
 
     -   These could give insights into the size and comfort level of the Airbnb, likely affecting the price.
-
--   Accommodation capacity (number of guests)
-
-    -   This could influence pricing as larger accommodations can host more guests.
 
 -   Room type
 
