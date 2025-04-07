@@ -57,12 +57,9 @@ Each row in the dataset represents a unique Airbnb listing in New York City. Eac
 #| label: visualization-01
 #| echo: false
 
-# histogram looks small because of the one outlier at 99k
-
 ggplot(data = airbnb, aes(x = price)) +
   geom_histogram(bins = 100) +
-  labs(title = "Distribution of Airbnb Prices 
-       in New York City", 
+  labs(title = "Distribution of Airbnb Prices in New York City", 
        x = "Listing Price (USD)", 
        y = "Count")
 ```
