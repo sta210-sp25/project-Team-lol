@@ -17,6 +17,8 @@ bibliography: references.bib
 library(tidyverse)
 library(tidymodels)
 library(knitr)
+install.packages("patchwork")
+library(patchwork)
 
 airbnb <- read.csv("data/listings.csv")
 ```
@@ -73,11 +75,14 @@ Each row in the dataset represents a unique Airbnb listing in New York City. Eac
 
 # histogram looks small because of the one outlier at 99k
 
-ggplot(data = airbnb, aes(x = price)) +
+figure1 <- ggplot(data = airbnb, aes(x = price)) +
   geom_histogram(bins = 100) +
-  labs(title = "Distribution of Airbnb Prices in New York City", 
+  labs(title = "Distribution of Airbnb Prices 
+       in New York City", 
        x = "Listing Price (USD)", 
-       y = "Count") 
+       y = "Count")
+
+figure1
 ```
 
 ```{r}
@@ -97,12 +102,14 @@ The distribution is pretty heavily right skewed, as can be seen from both of the
 ```{r}
 #| label: figure-03
 # set x axis ranges to get closer look at dist
-ggplot(airbnb, aes(x = price)) +
+figure2 <- ggplot(airbnb, aes(x = price)) +
   geom_histogram(bins = 30) +
-  labs(title = "Closer Look at Distribution of Price (Removed Outliers)", 
+  labs(title = "Closer Look at Distribution of Price 
+       (Removed Outliers)", 
        x = "Listing Price (USD)", 
        y = "Count") +
   xlim(0, 2500) 
+figure2
 ```
 
 From the initial histogram, since the majority of the listings seem to fall between 0 and 2500 dollars, we visualized the distribution of the listings between this price range to get a better view of it. We can see that the distribution is still right skewed, and the vast majority of the listings seem to cost between \$50-\$200. There are a few more points visible that were not in the initial histogram that appear to be quite far from where the majority of the listings are clustered, so we will go back and check to see if they are greater than 1.5 x IQR and can be classified as outliers. We also plan to apply log transformation to this variable to address the skew of the response variable.
@@ -112,12 +119,16 @@ From the initial histogram, since the majority of the listings seem to fall betw
 ```{r}
 #| label: figure-04
 
-ggplot(data = airbnb, aes(x = bedrooms)) +
+figure3 <- ggplot(data = airbnb, aes(x = bedrooms)) +
   geom_histogram(bins = 25) +
-  labs(title = "Distribution of Number of Airbnb Bedrooms in New York City", 
+  labs(title = "Distribution of Number of Airbnb 
+  Bedrooms in New York City", 
        x = "Number of Bedrooms", 
        y = "Count") 
+figure3
 ```
+
+The distribution of the number of bedrooms for Airbnb listings in New York City is skewed to the right. Most properties are one- or two-bedroom units. This aligns with the typical demand for smaller accommodations, which are more suited for individuals or small groups that might be more common. Listings with more bedrooms, such as 5 or more, are far less common. Larger apartments or homes, typically with 3 or more bedrooms, are less frequent, but they most likely consist of listings that may be priced much higher.
 
 ```{r}
 #| label: figure-05
@@ -137,11 +148,13 @@ summary_tibble2
 ```{r}
 #| label: figure-06
 
-ggplot(data = airbnb, aes(x = review_scores_rating)) +
+figure4 <- ggplot(data = airbnb, aes(x = review_scores_rating)) +
   geom_histogram() +
-  labs(title = "Distribution of Average Airbnb Review Scores in New York City", 
+  labs(title = "Distribution of Average Airbnb 
+  Review Scores in New York City", 
        x = "Average Review Score (out of 5.0)", 
-       y = "Count")
+       y = "Count") 
+figure4
 ```
 
 ```{r}
@@ -157,40 +170,245 @@ summary_tibble3 <- tibble(
 summary_tibble3
 ```
 
+The distribution of the predictor variable "review score" is skewed left, with the median of 4.85 being slightly higher than the mean of 4.72. The majority of the reviews are around 5 (over 6000 of them), and the vast majority of the observations are between 4 and 5, with very few of them being below 3. Additionally, there are quite a few NA values for this variable (around a third of the rows have NAs).
+
 ### Predictor Variable - Room Type
 
+```{r}
+#| label: figure-08
+figure5 <- ggplot(airbnb, aes(x = room_type)) +
+  geom_bar(fill = "lightblue", color = "black") +
+  labs(
+    title = "Distribution of Room Types",
+    x = "Room Type",
+    y = "Count"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 20),      
+    axis.title = element_text(size = 16),                     
+    axis.text = element_text(size = 14),                      
+    legend.title = element_text(size = 14),                    
+    legend.text = element_text(size = 12)                     
+  )
+figure5
+```
+
+```{r}
+#| label: figure-09
+
+table(airbnb$room_type) |>
+  kable(digits = 3)
+
+```
+
+The mode, or most frequent room type in this dataset is Entire home/apt, followed by private room; these may be more popular and sought out, and might tend to be more expensive than the hotel or shared rooms. There are very few hotel rooms and even fewer shared rooms.
+
 ### Predictor Variable - Neighborhood
+
+```{r}
+#| label: figure-10
+
+figure6 <- ggplot(airbnb, aes(x = neighbourhood_group_cleansed)) +
+  geom_bar(fill = "lightblue", color = "black") +
+  labs(
+    title = "Distribution of Neighbourhood Groups",
+    x = "Neighbourhood Group",
+    y = "Count"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 20),      
+    axis.title = element_text(size = 16),                     
+    axis.text = element_text(size = 14),                      
+    legend.title = element_text(size = 14),                    
+    legend.text = element_text(size = 12)                     
+  )
+figure6
+```
+
+```{r}
+#| label: figure-11
+
+table(airbnb$neighbourhood_group_cleansed)|>
+  kable(digits = 3)
+
+```
+
+The majority of the airbnb listings are in Manhattan (just over 10,000), followed by Brooklyn (around 7500), and Queens (a bit over 2500). A few of them are in Bronx and even fewer in Staten Island. This is to be expected, as Manhattan and Brooklyn are prime areas for tourism and business, while other areas might be less popular for short-term rentals.
+
+```{r}
+#| label: quantitative-figures
+
+figure1 + figure2 + figure3 + figure4 
+
+
+```
 
 ## Bivariate Exploratory Data Analysis
 
 ### Response (Price) vs Predictor Variable (number of prices)
 
 ```{r}
-#| label: figure-10
+#| label: figure-12
 
 ggplot(airbnb, aes(x = bedrooms, y = price)) +
-  geom_point() +
-  labs(title = "Price vs. Number of Bedrooms", x = "Number of Bedrooms", y = "Price") +
-  theme_minimal()
+  geom_point(alpha = 0.5) +
+  labs(title = "Price vs. Number of Bedrooms",
+       x = "Number of Bedrooms",
+       y = "Price (USD)") +
+  theme(
+    plot.title = element_text(size = 20),      
+    axis.title = element_text(size = 16),                     
+    axis.text = element_text(size = 14),                      
+    legend.title = element_text(size = 14),                    
+    legend.text = element_text(size = 12)                     
+  )
 ```
+
+This scatter plot visualizes the relationship between the number of bedrooms and the price of Airbnb listings in New York City. There is not a clear trend. However, listings with 0 to 5 bedrooms exhibit a wide range of prices, with some listings priced significantly higher than the majority. Some outliers even exceed \$10,000 per night, likely representing luxury or highly unique accommodations. This indicates that other factors such as location, room type, and review scores may have a stronger influence on pricing.
 
 ### Response (Price) vs Predictor Variable (review scores)
 
 ```{r}
-#| label: figure-11
+#| label: figure-13
 
 ggplot(airbnb, aes(x = review_scores_rating, y = price)) +
-  geom_point() +
-  labs(title = "Price vs. Review Scores Rating", x = "Review Scores Rating", y = "Price") +
-  theme_minimal()
+  geom_point(alpha = 0.5) +
+  labs(title = "Price vs. Review Score",
+       x = "Review Score",
+       y = "Price (USD)") +
+  theme(
+    plot.title = element_text(size = 20),      
+    axis.title = element_text(size = 16),                     
+    axis.text = element_text(size = 14),                      
+    legend.title = element_text(size = 14),                    
+    legend.text = element_text(size = 12)                     
+  )
+
 ```
+
+This scatter plot shows the relationship between price and review scores. However, it looks a little problematic and hard to interpret because high data density at certain score levels, especially between 4 and 5. Since the price variable is highly skewed, we applied a log transformation to try to help spread out values and make trends more visible.
+
+```{r}
+#| label: figure-14
+
+airbnb_filtered <- airbnb |>
+  filter(price <= quantile(price, 0.99))
+
+ggplot(airbnb_filtered, aes(x = review_scores_rating, y = log(price))) +
+  geom_jitter(alpha = 0.3) +  # Adds slight randomness to reduce overlap
+  labs(title = "Log-Transformed Price vs. Review Score",
+       x = "Review Score",
+       y = "Log of Price (USD)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 20),      
+    axis.title = element_text(size = 16),                     
+    axis.text = element_text(size = 14),                      
+    legend.title = element_text(size = 14),                    
+    legend.text = element_text(size = 12)                     
+  )
+```
+
+The majority of listings have review scores between 4 and 5, this shows that most listings have scores within this range. Higher-rated listings tend to have slightly higher prices, but the effect is weak.
+
+### Response (Price) vs Predictor Variable (Room Type)
+
+```{r}
+#| label: figure-15
+
+ggplot(airbnb, aes(x = room_type, y = price)) +
+  geom_boxplot() +
+  labs(title = "Price Distribution by Room Type",
+       x = "Room Type",
+       y = "Price (USD)") +
+  theme(
+    plot.title = element_text(size = 20),      
+    axis.title = element_text(size = 16),                     
+    axis.text = element_text(size = 14),                      
+    legend.title = element_text(size = 14),                    
+    legend.text = element_text(size = 12)                     
+  )
+```
+
+This box plot tries to visualize the distribution of prices across different room types, but it appears compressed due to the presence of extreme outliers. This makes it difficult to interpret the main trends effectively. To improve the visualization, We applied a log transformation, which may help spread out the values and make the differences between room types clearer, because prices are highly skewed.
+
+```{r}
+#| label: figure-16
+
+ggplot(airbnb_filtered, aes(x = reorder(room_type, price, median), y = log(price))) +
+  geom_boxplot() +
+  labs(title = "Log-Transformed Price Distribution by Room Type",
+       x = "Room Type",
+       y = "Log of Price (USD)") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 20),      
+    axis.title = element_text(size = 16),                     
+    axis.text = element_text(size = 14),                      
+    legend.title = element_text(size = 14),                    
+    legend.text = element_text(size = 12)                     
+  )
+```
+
+This box plot provides a clearer comparison of price distributions across different room types. According to this plot, hotel rooms have the highest median price and general highest price among all room types, suggesting that they are generally priced higher than other Airbnb listings such as shared room and private room, etc. Also, the IQR for hotel rooms and entire homes/apartments is larger compared to private and shared rooms, indicating greater variation in pricing. Even after log transformation, private rooms and entire homes/apartments still exhibit a notable number of higher-end outliers. However, the log transformation has greatly reduced the impact of extreme values, making the distribution more interpretable.
+
+### Response (Price) vs Predictor Variable (Neighborhood)
+
+```{r}
+#| label: figure-17
+
+ggplot(airbnb, aes(x = neighbourhood_group_cleansed, y = price)) +
+  geom_boxplot() +
+  coord_flip() +  # Flip for better readability
+  labs(title = "Price Distribution by Neighbourhood",
+       x = "Neighbourhood",
+       y = "Price (USD)") +
+  theme(
+    plot.title = element_text(size = 20),      
+    axis.title = element_text(size = 16),                     
+    axis.text = element_text(size = 14),                      
+    legend.title = element_text(size = 14),                    
+    legend.text = element_text(size = 12)                     
+  )
+
+```
+
+The current plot has similar issues as plots that are shown above, which is difficult to interpret due to issues like extreme outliers and others. We removed the extreme values and also did log transformation.
+
+```{r}
+#| label: figure-18
+
+airbnb_filtered <- airbnb_filtered |>
+  mutate(neighbourhood_group_cleansed = reorder(neighbourhood_group_cleansed, price, median))
+
+ggplot(airbnb_filtered, aes(x = neighbourhood_group_cleansed, y = log(price))) +
+  geom_boxplot(outlier.size = 0.5) +
+  coord_flip() +  # Flip for readability
+  labs(title = "Log-Transformed Price Distribution 
+       by Neighborhood",
+       x = "Neighborhood",
+       y = "Log of Price (USD)") +
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 10)) +
+  theme(
+    plot.title = element_text(size = 20),      
+    axis.title = element_text(size = 16),                     
+    axis.text = element_text(size = 14),                      
+    legend.title = element_text(size = 14),                    
+    legend.text = element_text(size = 12)                     
+  )
+```
+
+According to this plot, we can see that Manhattan has the highest median price, showing that it is the most expensive borough for Airbnb listings. It alsoexhibits the widest IQR, suggesting a high variation in listing prices. The median of Brooklyn follows Manhattan, with a slightly lower median price but still a wider spread. There are still some outliers shown in the plot, but the interpretability is much better.
 
 ## Interaction Effects
 
 ### Bedrooms and Room Type
 
 ```{r}
-#| label: figure-12
+#| label: figure-19
 #| warning: FALSE
 #| echo: FALSE
 
@@ -204,7 +422,14 @@ airbnb_log |>
   labs(title = "Log Price vs. Bedrooms by Room Type",
        x = "Number of Bedrooms",
        y = "Log Price (log($))",
-       color = "Type of Room")
+       color = "Type of Room") +
+  theme(
+    plot.title = element_text(size = 20),      
+    axis.title = element_text(size = 16),                     
+    axis.text = element_text(size = 14),                      
+    legend.title = element_text(size = 14),                    
+    legend.text = element_text(size = 12)                     
+  )
 ```
 
 Based on the graph, it appears that the rate at which price increases per number of bedrooms varies across room types. The slope of the shared room especially seems to differ from the others. Thus, there may be an interaction effect here.
@@ -212,7 +437,7 @@ Based on the graph, it appears that the rate at which price increases per number
 ### Bedrooms and Neighborhood
 
 ```{r}
-#| label: figure-13
+#| label: figure-20
 #| warning: FALSE
 #| echo: false
 
@@ -223,7 +448,14 @@ airbnb_log |>
   labs(title = "Log Price vs. Bedrooms by Neighborhood",
        x = "Number of Bedrooms",
        y = "Log Price (log($))",
-       color = "Neighborhood")
+       color = "Neighborhood") +
+  theme(
+    plot.title = element_text(size = 20),      
+    axis.title = element_text(size = 16),                     
+    axis.text = element_text(size = 14),                      
+    legend.title = element_text(size = 14),                    
+    legend.text = element_text(size = 12)                     
+  )
 ```
 
 Based on the graph visually, it appears that the rate at which price increases per bedroom does not greatly vary based on neighborhood, especially compared to the previous graph by room type. Staten Island does have a noticeably different slope, though. Thus, there is a potential for an interaction effect between bedroom number and neighborhood, but not as much as the previous graph with bedroom and room type.
