@@ -1,6 +1,7 @@
 ---
+9---
 title: "Airbnbs in New York City"
-author: "Team lol: Tamsin Connerly, Hannah Lee, Jasmine Xiang"
+author: "Team lol: Tamsin Connerly, Hannah Lee, Jasmine Jiang"
 date: "3/17/25"
 format: pdf
 execute: 
