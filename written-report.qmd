@@ -435,10 +435,10 @@ According to this plot, we can see that Manhattan has the highest median price, 
 #| warning: FALSE
 #| echo: FALSE
 
-airbnb_log <- airbnb |>
+airbnb <- airbnb |>
   mutate(log_price = log(price))
 
-airbnb_log |>
+airbnb |>
   ggplot(aes(x = bedrooms, y = log(price), color = room_type)) +
   geom_point() +
   geom_smooth(method = "lm", se = FALSE) +
@@ -464,7 +464,7 @@ Based on the graph, it appears that the rate at which price increases per number
 #| warning: FALSE
 #| echo: false
 
-airbnb_log |>
+airbnb |>
   ggplot(aes(x = bedrooms, y = log(price), color = neighbourhood_group_cleansed)) +
   geom_point() +
   geom_smooth(method = "lm", se = FALSE) +
@@ -482,3 +482,30 @@ airbnb_log |>
 ```
 
 Based on the graph visually, it appears that the rate at which price increases per bedroom does not greatly vary based on neighborhood, especially compared to the previous graph by room type. Staten Island does have a noticeably different slope, though. Thus, there is a potential for an interaction effect between bedroom number and neighborhood, but not as much as the previous graph with bedroom and room type.
+
+## Building the Model
+
+### Multiple Linear Regression With No Interaction
+
+```{r}
+#| label: model-without-interaction
+
+airbnb_fit <- lm(log_price ~ bedrooms + room_type + review_scores_rating 
+                           + neighbourhood_group_cleansed, data = airbnb)
+
+tidy(airbnb_fit) |>
+  kable(digits = 3)
+```
+
+### Multiple Linear Regression with Interaction Effects
+
+```{r}
+#| label: model-interaction
+
+airbnb_fit_interaction <- lm(log_price ~ bedrooms + room_type + review_scores_rating 
+                           + neighbourhood_group_cleansed + bedrooms * room_type, data = airbnb)
+
+tidy(airbnb_fit_interaction) |>
+  kable(digits = 3)
+
+```
