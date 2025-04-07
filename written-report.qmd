@@ -87,14 +87,8 @@ figure1
 
 ```{r}
 #| label: figure-02
-summary_stats <- summary(airbnb$price)
-
-summary_tibble <- tibble(
-  Statistic = names(summary_stats),
-  Value = summary_stats
-)
-
-summary_tibble
+tidy(summary(airbnb$price)) |>
+  kable(digits = 3)
 ```
 
 The distribution is pretty heavily right skewed, as can be seen from both of the histograms. It is difficult to analyze the distribution in the first histogram because there is an outlier at \$20,000 and makes the bins and binwidth very narrow and zoomed out (since the range of the data is too large). It is also clear that this outlier impacts the mean, since the median of \$140 is quite a bit less than the mean of around \$213.84, and the mean is roughly equal to the 3rd quartile which is also around \$240. We plan to to remove this outlier as a result when doing our analysis, and we will go into more depth later and check for additional outliers.
@@ -133,14 +127,9 @@ The distribution of the number of bedrooms for Airbnb listings in New York City 
 ```{r}
 #| label: figure-05
 
-summary_stats2 <- summary(airbnb$bedrooms)
+tidy(summary(airbnb$bedrooms)) |>
+  kable(digits = 3)
 
-summary_tibble2 <- tibble(
-  Statistic = names(summary_stats2),
-  Value = summary_stats2
-)
-
-summary_tibble2
 ```
 
 ### Predictor Variable - Review Scores
@@ -160,17 +149,52 @@ figure4
 ```{r}
 #| label: figure-07
 
-summary_stats3 <- summary(airbnb$review_scores_rating)
-
-summary_tibble3 <- tibble(
-  Statistic = names(summary_stats3),
-  Value = summary_stats3
-)
-
-summary_tibble3
+tidy(summary(airbnb$review_scores_rating)) |>
+  kable(digits = 3)
 ```
 
 The distribution of the predictor variable "review score" is skewed left, with the median of 4.85 being slightly higher than the mean of 4.72. The majority of the reviews are around 5 (over 6000 of them), and the vast majority of the observations are between 4 and 5, with very few of them being below 3. Additionally, there are quite a few NA values for this variable (around a third of the rows have NAs).
+
+Table of the distribution of the number of reviews
+
+```{r}
+#| label: calculation
+#| echo: false
+
+tidy(summary(airbnb$number_of_reviews)) |>
+  kable(digits = 3)
+```
+
+To account for the NAs, we will filter the dataset to include only listings with 5 or more reviews. The median number of reviews is 5, and the average is 34.35.
+
+```{r}
+#| label: data-transformation
+#| echo: false
+
+airbnb <- airbnb |>
+  filter(number_of_reviews >= 5)
+```
+
+```{r}
+#| label: figure-07.5
+#| echo: false
+
+ggplot(data = airbnb, aes(x = review_scores_rating)) +
+  geom_histogram() +
+  labs(title = "Distribution of Average Airbnb 
+  Review Scores in New York City with at Least 5 Reviews", 
+       x = "Average Review Score (out of 5.0)", 
+       y = "Count") 
+```
+
+```{r}
+#| label: review-filtered-summary
+
+tidy(summary(airbnb$review_scores_rating)) |>
+  kable(digits = 3)
+```
+
+The distribution of review scores is still skewed left, with a median of 4.82
 
 ### Predictor Variable - Room Type
 
@@ -242,7 +266,6 @@ The majority of the airbnb listings are in Manhattan (just over 10,000), followe
 
 figure1 + figure2 + figure3 + figure4 
 
-
 ```
 
 ## Bivariate Exploratory Data Analysis
@@ -293,10 +316,10 @@ This scatter plot shows the relationship between price and review scores. Howeve
 ```{r}
 #| label: figure-14
 
-airbnb_filtered <- airbnb |>
+airbnb <- airbnb |>
   filter(price <= quantile(price, 0.99))
 
-ggplot(airbnb_filtered, aes(x = review_scores_rating, y = log(price))) +
+ggplot(airbnb, aes(x = review_scores_rating, y = log(price))) +
   geom_jitter(alpha = 0.3) +  # Adds slight randomness to reduce overlap
   labs(title = "Log-Transformed Price vs. Review Score",
        x = "Review Score",
@@ -337,7 +360,7 @@ This box plot tries to visualize the distribution of prices across different roo
 ```{r}
 #| label: figure-16
 
-ggplot(airbnb_filtered, aes(x = reorder(room_type, price, median), y = log(price))) +
+ggplot(airbnb, aes(x = reorder(room_type, price, median), y = log(price))) +
   geom_boxplot() +
   labs(title = "Log-Transformed Price Distribution by Room Type",
        x = "Room Type",
@@ -380,10 +403,10 @@ The current plot has similar issues as plots that are shown above, which is diff
 ```{r}
 #| label: figure-18
 
-airbnb_filtered <- airbnb_filtered |>
+airbnb <- airbnb |>
   mutate(neighbourhood_group_cleansed = reorder(neighbourhood_group_cleansed, price, median))
 
-ggplot(airbnb_filtered, aes(x = neighbourhood_group_cleansed, y = log(price))) +
+ggplot(airbnb, aes(x = neighbourhood_group_cleansed, y = log(price))) +
   geom_boxplot(outlier.size = 0.5) +
   coord_flip() +  # Flip for readability
   labs(title = "Log-Transformed Price Distribution 
