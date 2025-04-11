@@ -20,6 +20,7 @@ library(tidymodels)
 library(knitr)
 install.packages("patchwork")
 library(patchwork)
+library(rms)
 
 airbnb <- read.csv("data/listings.csv")
 ```
@@ -377,6 +378,51 @@ tidy(airbnb_fit_interaction) |>
   kable(digits = 3)
 ```
 
+### Evaluating the Models
+
+```{r}
+#| label: r2-values
+
+glance(airbnb_fit) |>
+  select(r.squared, adj.r.squared) |>
+  kable(digits = 3)
+glance(airbnb_fit_interaction) |>
+  select(r.squared, adj.r.squared) |>
+  kable(digits = 3)
+
+```
+
+The model that includes the interaction effect between bedrooms and room type seems to perform slightly better, with higher $r^2$ and adjusted $r^2$ values of 0.391 and 0.39, respectively.
+
+```{r}
+#| label: drop-in-deviance
+
+dropdev <- anova(airbnb_fit, airbnb_fit_interaction, test = "Chisq") |>
+  kable(digits = 3)
+
+dropdev
+
+```
+
+The results from the drop in deviance test also support this, as the p-value is less than the threshold, indicating that including the interaction terms is able to significantly improve the model's ability to explain variation in log price.
+
+```{r}
+#| label: check-multicollinearity
+
+vif(airbnb_fit) |>
+  as.data.frame() |>
+  `colnames<-`("VIF") |>
+  tibble::rownames_to_column("Predictor") |>
+  kable(digits = 3)
+
+vif(airbnb_fit_interaction) |>
+  as.data.frame() |>
+  `colnames<-`("VIF") |>
+  tibble::rownames_to_column("Predictor") |>
+  kable(digits = 3)
+
+```
+
 ### Assumption Check
 
 ```{r}
@@ -404,4 +450,3 @@ According to the residual plots, for both models without and with interaction te
 The normality is fine because our dataset has more than 10,000 data points, which is large enough (n \> 30) to satisfy the normality assumption.
 
 The independence is reasonably satisfied because each row in the dataset represents a distinct Airbnb listing, and the data is randomly collected. There is no indication of temporal or spatial autocorrelation, and there are no repeated measurements from the same listing.
-
