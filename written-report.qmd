@@ -423,6 +423,10 @@ vif(airbnb_fit_interaction) |>
 
 ```
 
+To assess multicollinearity, we calculated Variance Inflation Factors (VIFs) for both the two models. In the model without interaction terms, all predictors had VIF values below 6. The highest values were observed for the neighborhood dummy variables neighbourhood_group_cleansedBrooklyn (VIF = 5.659) and neighbourhood_group_cleansedManhattan (VIF = 5.573), indicating moderate multicollinearity, but still within acceptable limits. All other predictors had VIFs close to 1, suggesting low collinearity.
+
+In the interaction-effects model, VIF values slightly increased, particularly for `room_typeHotel room` (VIF = 7.202) and its interaction with `bedrooms` (VIF = 7.191). This is expected due to the inclusion of interaction terms, which can introduce redundancy and inflate variance when the interacting variables are correlated or when one category has relatively fewer observations. `room_typePrivate room` and its interaction term also showed moderately elevated VIFs (4.821 and 4.574 respectively). However, **n**one of the predictors exceeded the common VIF threshold of 10, indicating that severe multicollinearity is not present in either model.
+
 ### Assumption Check
 
 ```{r}
