@@ -171,7 +171,11 @@ airbnb |>
 
 Based on the graph, it appears that the rate at which price increases per number of bedrooms varies across room types. The slope of the shared room especially seems to differ from the others. Thus, there may be an interaction effect here.
 
-## Building the Model
+## Methodology
+
+We chose to build a multiple linear regression model, as we wanted to use multiple explanatory variables to predict our continuous response variable: airbnb price.
+
+To build the model, we kept used the log transformed price as the response variable due to our findings from the EDA above. The predictor variables we included in the model were the number of bedrooms, room type, review score ratings, and neighborhood. We decided to wanted to build a model that did not include the interaction between room type and number of bedrooms (this was the most obvious potential interaction effect from our EDA), and then build a second model that included the interaction and see which one performed better before selecting our final model.
 
 ### Multiple Linear Regression With No Interaction
 
@@ -199,6 +203,8 @@ tidy(airbnb_fit_interaction) |>
 
 ### Evaluating the Models
 
+To evaluate both models' performance, we decided to take a look at their $r^2$ and adjusted $r^2$ values to see which model had higher values.
+
 ```{r}
 #| label: r2-values
 
@@ -211,7 +217,7 @@ glance(airbnb_fit_interaction) |>
 
 ```
 
-The model that includes the interaction effect between bedrooms and room type seems to perform slightly better, with higher $r^2$ and adjusted $r^2$ values of 0.391 and 0.39, respectively.
+The model that includes the interaction effect between bedrooms and room type seems to perform slightly better, with higher $r^2$ and adjusted $r^2$ values of 0.391 and 0.39, respectively. To further validate this, we wanted to conducted a drop in deviance test to see if there was a difference between the two models' performance.
 
 ```{r}
 #| label: drop-in-deviance
@@ -223,7 +229,7 @@ dropdev
 
 ```
 
-The results from the drop in deviance test also support this, as the p-value is less than the threshold, indicating that including the interaction terms is able to significantly improve the model's ability to explain variation in log price.
+The results from the drop in deviance test also support this, as the p-value is less than the threshold, indicating that including the interaction effect is able to significantly improve the model's ability to explain variation in log price. As a result, we decided to select the model with the interaction effect as our final model.
 
 ```{r}
 #| label: check-multicollinearity
@@ -245,6 +251,10 @@ vif(airbnb_fit_interaction) |>
 To assess multicollinearity, we calculated Variance Inflation Factors (VIFs) for both the two models. In the model without interaction terms, all predictors had VIF values below 6. The highest values were observed for the neighborhood dummy variables neighbourhood_group_cleansedBrooklyn (VIF = 5.659) and neighbourhood_group_cleansedManhattan (VIF = 5.573), indicating moderate multicollinearity, but still within acceptable limits. All other predictors had VIFs close to 1, suggesting low collinearity.
 
 In the interaction-effects model, VIF values slightly increased, particularly for `room_typeHotel room` (VIF = 7.202) and its interaction with `bedrooms` (VIF = 7.191). This is expected due to the inclusion of interaction terms, which can introduce redundancy and inflate variance when the interacting variables are correlated or when one category has relatively fewer observations. `room_typePrivate room` and its interaction term also showed moderately elevated VIFs (4.821 and 4.574 respectively). However, **n**one of the predictors exceeded the common VIF threshold of 10, indicating that severe multicollinearity is not present in either model.
+
+## Results
+
+After selecting the interaction effect model to be our final model, we checked model assumptions, diagnostics, and model fit statistics.
 
 ### Assumption Check
 
@@ -273,3 +283,61 @@ According to the residual plots, for both models without and with interaction te
 The normality is fine because our dataset has more than 10,000 data points, which is large enough (n \> 30) to satisfy the normality assumption.
 
 The independence is reasonably satisfied because each row in the dataset represents a distinct Airbnb listing, and the data is randomly collected. There is no indication of temporal or spatial autocorrelation, and there are no repeated measurements from the same listing.
+
+### Model Diagnostics
+
+```{r}
+#| label: cooks-dist
+
+# check to see if there are any influential points
+diagnostics <- augment(airbnb_fit_interaction)
+
+ggplot(diagnostics, aes(x = seq_along(.cooksd), y = .cooksd)) +
+  geom_point(alpha = 0.6) +
+  geom_hline(yintercept = 0.5, linetype = "dashed", color = "blue") +
+  geom_hline(yintercept = 1, linetype = "dashed", color = "green") +
+  labs(title = "Cook’s Distance by Observation", x = "Observation Index", y = "Cook’s Distance") +
+  theme_minimal()
+
+```
+
+```{r}
+#| label: checking-influential-points
+
+# double checking for influential points
+diagnostics |>
+  filter(.cooksd > 0.5) |>
+  kable(digits = 3)
+```
+
+There do not seem to be any influential points in our model, where the Cook's Distance exceeds the 1 or 0.5 thresholds.
+
+```{r}
+#| label: leverage
+
+# calculate points with high leverage! 
+
+diagnostics <- diagnostics |>
+  mutate(
+    high_leverage = if_else(
+      .hat > (2 * length(coefficients(airbnb_fit_interaction)) / nrow(diagnostics)),
+      "High Leverage", 
+      "Normal Leverage"
+    )
+  )
+
+```
+
+```{r}
+#| label: plot-leverage
+# check for high leverage points
+ggplot(diagnostics, aes(x = seq_along(.hat), y = .hat)) +
+  geom_point(aes(color = high_leverage), alpha = 0.6) +
+  scale_color_manual(values = c("High Leverage" = "red", "Normal Leverage" = "darkblue")) +
+  geom_hline(yintercept = diagnostics$h_threshold, linetype = "dashed", color = "black") +
+  labs(title = "Leverage of Each Observation in Airbnb Model",
+       x = "Observation Index",
+       y = "Leverage (Hat Value)") +
+  theme_minimal() +
+  theme(legend.title = element_blank())
+```
