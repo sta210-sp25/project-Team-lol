@@ -301,15 +301,6 @@ ggplot(diagnostics, aes(x = seq_along(.cooksd), y = .cooksd)) +
 
 ```
 
-```{r}
-#| label: checking-influential-points
-
-# double checking for influential points
-diagnostics |>
-  filter(.cooksd > 0.5) |>
-  kable(digits = 3)
-```
-
 We used Cook’s Distance to assess whether any individual observations had an undue influence on the overall model fit. As shown in the “Cook’s Distance by Observation” plot, none of the observations exceed the commonly used thresholds of 0.5 (blue line) or 1 (green line). Additionally, the table listing points with Cook’s Distance greater than 0.5 returned no results. It conforms that there are no overly influential data points in our dataset. Therefore, our fitted model is stable and not disproportionately affected by any single observation.
 
 ```{r}
@@ -345,7 +336,7 @@ ggplot(diagnostics, aes(x = seq_along(.hat), y = .hat)) +
 We also examined leverage values (the hat values) to identify observations with unusual combinations of predictor values. We calculated the leverage using the standard threshold:
 
 $$
-\text{Leverage Threshold =} \frac{2(p+1)}{n}
+\text{High Leverage >} \frac{2(p+1)}{n}
 $$
 
 We used the plot to visualize the leverage values for each observation, distinguishing between “High Leverage” (red) and “Normal Leverage” (blue) points. While a number of high leverage points were identified, they do not correspond to high Cook’s Distance values, meaning they are not both unusual and influential. These points do not exert strong pull on the model’s regression coefficients. Therefore, our model is robust, with no extreme outliers distorting the regression estimates.
@@ -367,3 +358,5 @@ These values indicate that approximately 39% of the variability in log-transform
 Additionally, we conducted a drop-in-deviance test to validate the improvement from including the interaction terms. According to the results we got, the full model provides a statistically significant improvement in explaining the variability in price because it has a p-value smaller than 0.001.
 
 While the r-squared is moderate, this is under our expectation given the complexity and variability in Airbnb pricing. Other unobserved factors (such as amenities, host reputation, seasonal demand, or listing descriptions) likely contribute to price fluctuations and are not captured in this dataset.
+
+\[ADD INTERPRETATIONS OF PREDICTOR VARIABLES\]
