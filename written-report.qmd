@@ -310,7 +310,7 @@ diagnostics |>
   kable(digits = 3)
 ```
 
-There do not seem to be any influential points in our model, where the Cook's Distance exceeds the 1 or 0.5 thresholds.
+We used Cook’s Distance to assess whether any individual observations had an undue influence on the overall model fit. As shown in the “Cook’s Distance by Observation” plot, none of the observations exceed the commonly used thresholds of 0.5 (blue line) or 1 (green line). Additionally, the table listing points with Cook’s Distance greater than 0.5 returned no results. It conforms that there are no overly influential data points in our dataset. Therefore, our fitted model is stable and not disproportionately affected by any single observation.
 
 ```{r}
 #| label: leverage
@@ -341,3 +341,29 @@ ggplot(diagnostics, aes(x = seq_along(.hat), y = .hat)) +
   theme_minimal() +
   theme(legend.title = element_blank())
 ```
+
+We also examined leverage values (the hat values) to identify observations with unusual combinations of predictor values. We calculated the leverage using the standard threshold:
+
+$$
+\text{Leverage Threshold =} \frac{2(p+1)}{n}
+$$
+
+We used the plot to visualize the leverage values for each observation, distinguishing between “High Leverage” (red) and “Normal Leverage” (blue) points. While a number of high leverage points were identified, they do not correspond to high Cook’s Distance values, meaning they are not both unusual and influential. These points do not exert strong pull on the model’s regression coefficients. Therefore, our model is robust, with no extreme outliers distorting the regression estimates.
+
+### Model Fit Statistics
+
+To evaluate how well our model explains variation in Airbnb listing prices, we compared two multiple linear regression models: one without and one with interaction terms between room type and number of bedrooms. The final model we chose is the model includes the interaction effects, which shows slightly better performance based on both the r-squared:
+
+$$
+R^2 = 0.391
+$$
+
+$$
+\text{Adj } R^2 = 0.390
+$$
+
+These values indicate that approximately 39% of the variability in log-transformed Airbnb prices is explained by our model, which includes predictors such as room type, number of bedrooms, neighborhood, review scores, and their interactions.
+
+Additionally, we conducted a drop-in-deviance test to validate the improvement from including the interaction terms. According to the results we got, the full model provides a statistically significant improvement in explaining the variability in price because it has a p-value smaller than 0.001.
+
+While the r-squared is moderate, this is under our expectation given the complexity and variability in Airbnb pricing. Other unobserved factors (such as amenities, host reputation, seasonal demand, or listing descriptions) likely contribute to price fluctuations and are not captured in this dataset.
