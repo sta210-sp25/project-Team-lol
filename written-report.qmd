@@ -98,7 +98,7 @@ The distribution of review scores is skewed left after the transformation, with 
 
 ```{r}
 #| label: figure-13
-#| fig-height: 3
+#| fig-height: 2.5
 
 ggplot(airbnb, aes(x = review_scores_rating, y = price)) +
   geom_point(alpha = 0.5) +
@@ -112,7 +112,7 @@ This scatter plot shows the relationship between price and review scores. Howeve
 
 ```{r}
 #| label: figure-14
-#| fig-height: 3
+#| fig-height: 2.5
 
 airbnb <- airbnb |>
   filter(price <= quantile(price, 0.99))
