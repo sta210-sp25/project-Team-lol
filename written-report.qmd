@@ -126,26 +126,6 @@ ggplot(airbnb, aes(x = review_scores_rating, y = log(price))) +
 
 The majority of listings have review scores between 4 and 5, this shows that most listings have scores within this range. Higher-rated listings tend to have slightly higher prices, but the effect is weak.
 
-### Response (Price) vs Predictor Variable (Neighborhood)
-
-```{r}
-#| label: figure-18
-#| fig-height: 2.5
-
-airbnb <- airbnb |>
-  mutate(neighbourhood_group_cleansed = reorder(neighbourhood_group_cleansed, price, median))
-
-ggplot(airbnb, aes(x = neighbourhood_group_cleansed, y = log(price))) +
-  geom_boxplot(outlier.size = 0.5) +
-  coord_flip() +  # Flip for readability
-  labs(title = "Log-Transformed Price Distribution 
-       by Neighborhood",
-       x = "Neighborhood",
-       y = "Log of Price (USD)") 
-```
-
-According to this plot, we can see that Manhattan has the highest median price, showing that it is the most expensive borough for Airbnb listings. It alsoexhibits the widest IQR, suggesting a high variation in listing prices. The median of Brooklyn follows Manhattan, with a slightly lower median price but still a wider spread. There are still some outliers shown in the plot, but the interpretability is much better.
-
 ## Interaction Effects
 
 ### Bedrooms and Room Type
@@ -260,14 +240,7 @@ After selecting the interaction effect model to be our final model, we checked m
 
 ```{r}
 #| label: linearity-and-equal-variance
-
-# model without interaction terms
-ggplot(augment(airbnb_fit), aes(.fitted, .resid)) +
-  geom_point() +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
-  labs(title = "Residuals vs Fitted Values (without interaction terms)",
-       x = "Fitted Values", 
-       y = "Residuals")
+#| fig-height: 2
 
 # model with interaction terms
 ggplot(augment(airbnb_fit_interaction), aes(.fitted, .resid)) +
@@ -278,9 +251,9 @@ ggplot(augment(airbnb_fit_interaction), aes(.fitted, .resid)) +
        y = "Residuals")
 ```
 
-According to the residual plots, for both models without and with interaction terms, the residuals are centered around 0, which suggests that linearity is satisfied. However, both plots show a mild equal variance because there’s a slight funnel shape – residuals seem more spread out at lower fitted values and slightly tighter at higher fitted values. There are also few vertical lines of the residuals, indicating discrete fitted values, likely due to categorical variables like room type or neighborhood.
+According to the residual plot, the residuals are centered around 0, which suggests that linearity is satisfied. However, there is a mild violation equal variance because there’s a slight funnel shape – residuals seem more spread out at lower fitted values and slightly tighter at higher fitted values. There are also few vertical lines of the residuals, indicating discrete fitted values, likely due to categorical variables like room type or neighborhood.
 
-The normality is fine because our dataset has more than 10,000 data points, which is large enough (n \> 30) to satisfy the normality assumption.
+We do not need to be concerned about data normality because our dataset has more than 10,000 data points, which is large enough (n \> 30) to satisfy the normality assumption.
 
 The independence is reasonably satisfied because each row in the dataset represents a distinct Airbnb listing, and the data is randomly collected. There is no indication of temporal or spatial autocorrelation, and there are no repeated measurements from the same listing.
 
@@ -288,6 +261,7 @@ The independence is reasonably satisfied because each row in the dataset represe
 
 ```{r}
 #| label: cooks-dist
+#| fig-height: 2
 
 # check to see if there are any influential points
 diagnostics <- augment(airbnb_fit_interaction)
@@ -305,6 +279,7 @@ We used Cook’s Distance to assess whether any individual observations had an u
 
 ```{r}
 #| label: leverage
+#| fig-height: 2
 
 # calculate points with high leverage! 
 
@@ -321,6 +296,7 @@ diagnostics <- diagnostics |>
 
 ```{r}
 #| label: plot-leverage
+#| fig-height: 2
 # check for high leverage points
 ggplot(diagnostics, aes(x = seq_along(.hat), y = .hat)) +
   geom_point(aes(color = high_leverage), alpha = 0.6) +
@@ -343,17 +319,7 @@ We used the plot to visualize the leverage values for each observation, distingu
 
 ### Model Fit Statistics
 
-To evaluate how well our model explains variation in Airbnb listing prices, we compared two multiple linear regression models: one without and one with interaction terms between room type and number of bedrooms. The final model we chose is the model includes the interaction effects, which shows slightly better performance based on both the r-squared:
-
-$$
-R^2 = 0.391
-$$
-
-$$
-\text{Adj } R^2 = 0.390
-$$
-
-These values indicate that approximately 39% of the variability in log-transformed Airbnb prices is explained by our model, which includes predictors such as room type, number of bedrooms, neighborhood, review scores, and their interactions.
+To evaluate how well our model explains variation in Airbnb listing prices, we compared two multiple linear regression models: one without and one with interaction terms between room type and number of bedrooms. The final model we chose is the model includes the interaction effects, which shows slightly better performance based on both the r-squared ($R^2 = 0.391$ , $Adj \space R^2 = 0.390$). These values indicate that approximately 39% of the variability in log-transformed Airbnb prices is explained by our model, which includes predictors such as room type, number of bedrooms, neighborhood, review scores, and their interactions.
 
 Additionally, we conducted a drop-in-deviance test to validate the improvement from including the interaction terms. According to the results we got, the full model provides a statistically significant improvement in explaining the variability in price because it has a p-value smaller than 0.001.
 
