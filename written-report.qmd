@@ -44,7 +44,7 @@ Understanding the determinants of Airbnb pricing in New York City is crucial for
 ```{r}
 #| label: figure-02
 tidy(summary(airbnb$price)) |>
-  kable(digits = 3)
+  kable(digits = 3, caption = "Price Distribution Summary")
 ```
 
 The distribution is pretty heavily right skewed. There is an outlier at \$20,000 that impacts the mean, since the median of \$140 is quite a bit less than the mean of around \$213.84, and the mean is roughly equal to the 3rd quartile which is also around \$240. The second highest price value is less than \$1,000. We have removed this outlier for our analysis.
@@ -157,8 +157,6 @@ We chose to build a multiple linear regression model, as we wanted to use multip
 
 To build the model, we kept used the log transformed price as the response variable due to our findings from the EDA above. The predictor variables we included in the model were the number of bedrooms, room type, review score ratings, and neighborhood. We decided to wanted to build a model that did not include the interaction between room type and number of bedrooms (this was the most obvious potential interaction effect from our EDA), and then build a second model that included the interaction and see which one performed better before selecting our final model.
 
-### Multiple Linear Regression With No Interaction
-
 ```{r}
 #| label: model-without-interaction
 
@@ -166,10 +164,8 @@ airbnb_fit <- lm(log_price ~ bedrooms + room_type + review_scores_rating
                            + neighbourhood_group_cleansed, data = airbnb)
 
 tidy(airbnb_fit) |>
-  kable(digits = 3)
+  kable(digits = 3, caption = "Model Without Interaction Term")
 ```
-
-### Multiple Linear Regression with Interaction Effects
 
 ```{r}
 #| label: model-interaction
@@ -178,7 +174,7 @@ airbnb_fit_interaction <- lm(log_price ~ bedrooms + room_type + review_scores_ra
                            + neighbourhood_group_cleansed + bedrooms * room_type, data = airbnb)
 
 tidy(airbnb_fit_interaction) |>
-  kable(digits = 3)
+  kable(digits = 3, caption = "Model With Interaction Term")
 ```
 
 ### Evaluating the Models
@@ -190,20 +186,20 @@ To evaluate both models' performance, we decided to take a look at their $r^2$ a
 
 glance(airbnb_fit) |>
   select(r.squared, adj.r.squared) |>
-  kable(digits = 3)
+  kable(digits = 3, caption = "R Squared Values for Model Without Interaction")
 glance(airbnb_fit_interaction) |>
   select(r.squared, adj.r.squared) |>
-  kable(digits = 3)
+  kable(digits = 3, caption = "R Squared Values for Model With Interaction")
 
 ```
 
-The model that includes the interaction effect between bedrooms and room type seems to perform slightly better, with higher $r^2$ and adjusted $r^2$ values of 0.391 and 0.39, respectively. To further validate this, we wanted to conducted a drop in deviance test to see if there was a difference between the two models' performance.
+The model that includes the interaction effect between bedrooms and room type seems to perform slightly better, with higher $R^2$ and adjusted $R^2$ values of 0.391 and 0.39, respectively. To further validate this, we wanted to conducted a drop in deviance test to see if there was a difference between the two models' performance.
 
 ```{r}
 #| label: drop-in-deviance
 
 dropdev <- anova(airbnb_fit, airbnb_fit_interaction, test = "Chisq") |>
-  kable(digits = 3)
+  kable(digits = 3, , caption = "Drop in Deviance Test")
 
 dropdev
 
@@ -218,13 +214,13 @@ vif(airbnb_fit) |>
   as.data.frame() |>
   `colnames<-`("VIF") |>
   tibble::rownames_to_column("Predictor") |>
-  kable(digits = 3)
+  kable(digits = 3, caption = "VIF Values for Model Without Interaction")
 
 vif(airbnb_fit_interaction) |>
   as.data.frame() |>
   `colnames<-`("VIF") |>
   tibble::rownames_to_column("Predictor") |>
-  kable(digits = 3)
+  kable(digits = 3, , caption = "VIF Values for Model Without Interaction")
 
 ```
 
@@ -284,33 +280,22 @@ We used Cook’s Distance to assess whether any individual observations had an u
 
 diagnostics <- diagnostics |>
   mutate(
-    high_leverage = if_else(
+    `High Leverage` = if_else(
       .hat > (2 * length(coefficients(airbnb_fit_interaction)) / nrow(diagnostics)),
       "High Leverage", 
       "Normal Leverage"
     )
   )
 
-```
+leverage_summary <- diagnostics |>
+  count(`High Leverage`, name = "Number of Observations")
 
-```{r}
-#| label: plot-leverage
-#| fig-height: 2
-# check for high leverage points
-ggplot(diagnostics, aes(x = seq_along(.hat), y = .hat)) +
-  geom_point(aes(color = high_leverage), alpha = 0.6) +
-  scale_color_manual(values = c("High Leverage" = "red", "Normal Leverage" = "darkblue")) +
-  geom_hline(yintercept = diagnostics$h_threshold, linetype = "dashed", color = "black") +
-  labs(title = "Leverage of Each Observation in Airbnb Model",
-       x = "Observation Index",
-       y = "Leverage (Hat Value)") +
-  theme_minimal() +
-  theme(legend.title = element_blank())
+kable(leverage_summary, caption = "Count of Observations by Leverage")
 ```
 
 We also examined leverage values (the hat values) to identify observations with unusual combinations of predictor values. We calculated the leverage using the standard threshold of$\text{High Leverage >} \frac{2(p+1)}{n}$
 
-We used the plot to visualize the leverage values for each observation, distinguishing between “High Leverage” (red) and “Normal Leverage” (blue) points. While a number of high leverage points were identified, they do not correspond to high Cook’s Distance values, meaning they are not both unusual and influential. These points do not exert strong pull on the model’s regression coefficients. Therefore, our model is robust, with no extreme outliers distorting the regression estimates.
+While 575 high leverage points were identified, they do not correspond to high Cook’s Distance values, meaning they are not both unusual and influential. These points do not exert strong pull on the model’s regression coefficients. Therefore, our model is robust, with no extreme outliers distorting the regression estimates.
 
 ### Model Fit Statistics
 
