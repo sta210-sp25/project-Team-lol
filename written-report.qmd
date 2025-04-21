@@ -272,31 +272,6 @@ kable(cooks_summary, caption = "Count of Observations by Cook's Distance Thresho
 
 We used Cook’s Distance to assess whether any individual observations had an undue influence on the overall model fit. As shown in the table, none of the observations exceed the commonly used threshold of 0.5 for moderately influential points. This affirms that there are no overly influential data points in our dataset that disproportionately impact the model.
 
-```{r}
-#| label: leverage
-#| fig-height: 2
-
-# calculate points with high leverage! 
-
-diagnostics <- diagnostics |>
-  mutate(
-    `High Leverage` = if_else(
-      .hat > (2 * length(coefficients(airbnb_fit_interaction)) / nrow(diagnostics)),
-      "High Leverage", 
-      "Normal Leverage"
-    )
-  )
-
-leverage_summary <- diagnostics |>
-  count(`High Leverage`, name = "Number of Observations")
-
-kable(leverage_summary, caption = "Count of Observations by Leverage")
-```
-
-We also examined leverage values (the hat values) to identify observations with unusual combinations of predictor values. We calculated the leverage using the standard threshold of$\text{High Leverage >} \frac{2(p+1)}{n}$
-
-While 575 high leverage points were identified, they do not correspond to high Cook’s Distance values, meaning they are not both unusual and influential. These points do not exert strong pull on the model’s regression coefficients. Therefore, our model is robust, with no extreme outliers distorting the regression estimates.
-
 ### Model Fit Statistics
 
 To evaluate how well our model explains variation in Airbnb listing prices, we compared two multiple linear regression models: one without and one with interaction terms between room type and number of bedrooms. The final model we chose is the model includes the interaction effects, which shows slightly better performance based on both the r-squared ($R^2 = 0.391$ , $Adj \space R^2 = 0.390$). These values indicate that approximately 39% of the variability in log-transformed Airbnb prices is explained by our model, which includes predictors such as room type, number of bedrooms, neighborhood, review scores, and their interactions.
