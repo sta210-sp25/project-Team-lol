@@ -261,21 +261,20 @@ The independence is reasonably satisfied because each row in the dataset represe
 
 ```{r}
 #| label: cooks-dist
-#| fig-height: 2
 
 # check to see if there are any influential points
 diagnostics <- augment(airbnb_fit_interaction)
 
-ggplot(diagnostics, aes(x = seq_along(.cooksd), y = .cooksd)) +
-  geom_point(alpha = 0.6) +
-  geom_hline(yintercept = 0.5, linetype = "dashed", color = "blue") +
-  geom_hline(yintercept = 1, linetype = "dashed", color = "green") +
-  labs(title = "Cook’s Distance by Observation", x = "Observation Index", y = "Cook’s Distance") +
-  theme_minimal()
+cooks_summary <- tibble(
+  `Over 0.5` = sum(diagnostics$.cooksd > 0.5, na.rm = TRUE),
+  `At or Below 0.5` = sum(diagnostics$.cooksd <= 0.5, na.rm = TRUE)
+)
+
+kable(cooks_summary, caption = "Count of Observations by Cook's Distance Threshold")
 
 ```
 
-We used Cook’s Distance to assess whether any individual observations had an undue influence on the overall model fit. As shown in the “Cook’s Distance by Observation” plot, none of the observations exceed the commonly used thresholds of 0.5 (blue line) or 1 (green line). Additionally, the table listing points with Cook’s Distance greater than 0.5 returned no results. It conforms that there are no overly influential data points in our dataset. Therefore, our fitted model is stable and not disproportionately affected by any single observation.
+We used Cook’s Distance to assess whether any individual observations had an undue influence on the overall model fit. As shown in the table, none of the observations exceed the commonly used threshold of 0.5 for moderately influential points. This affirms that there are no overly influential data points in our dataset that disproportionately impact the model.
 
 ```{r}
 #| label: leverage
@@ -309,11 +308,7 @@ ggplot(diagnostics, aes(x = seq_along(.hat), y = .hat)) +
   theme(legend.title = element_blank())
 ```
 
-We also examined leverage values (the hat values) to identify observations with unusual combinations of predictor values. We calculated the leverage using the standard threshold:
-
-$$
-\text{High Leverage >} \frac{2(p+1)}{n}
-$$
+We also examined leverage values (the hat values) to identify observations with unusual combinations of predictor values. We calculated the leverage using the standard threshold of$\text{High Leverage >} \frac{2(p+1)}{n}$
 
 We used the plot to visualize the leverage values for each observation, distinguishing between “High Leverage” (red) and “Normal Leverage” (blue) points. While a number of high leverage points were identified, they do not correspond to high Cook’s Distance values, meaning they are not both unusual and influential. These points do not exert strong pull on the model’s regression coefficients. Therefore, our model is robust, with no extreme outliers distorting the regression estimates.
 
