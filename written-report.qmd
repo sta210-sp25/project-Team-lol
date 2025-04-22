@@ -207,16 +207,39 @@ glance(airbnb_fit_interaction) |>
 ```{r}
 #| label: regularprice-r2
 
-glance(reg_airbnb_fit) |>
-  select(r.squared, adj.r.squared) |>
-  kable(digits = 3, caption = "R Squared Values for Model Without Interaction (Regular Price)")
-glance(reg_airbnb_fit_interaction) |>
-  select(r.squared, adj.r.squared) |>
-  kable(digits = 3, caption = "R Squared Values for Model With Interaction (Regular Price)")
+
+#glance(reg_airbnb_fit) |>
+  #select(r.squared, adj.r.squared) |>
+  #kable(digits = 3, caption = "R Squared Values for Model Without Interaction (Regular Price)")
+#glance(reg_airbnb_fit_interaction) |>
+  #select(r.squared, adj.r.squared) |>
+  #kable(digits = 3, caption = "R Squared Values for Model With Interaction (Regular Price)")
+
 
 ```
 
 The model that includes the interaction effect between bedrooms and room type seems to perform slightly better, with higher $R^2$ and adjusted $R^2$ values of 0.391 and 0.39, respectively. To further validate this, we wanted to conducted a drop in deviance test to see if there was a difference between the two models' performance.
+
+```{r}
+#| label: modelfit-test
+
+# fitting selected interactions model on testing data
+airbnbtest <- airbnb_test |>
+  mutate(predictions = predict(reg_airbnb_fit_interaction, newdata = airbnb_test)) 
+
+
+aug_airbnb_test <- augment(airbnb_fit_interaction, newdata = airbnbtest)
+
+airbnb_int_test_fit <- lm(log_price ~ bedrooms + room_type + review_scores_rating 
+                           + neighbourhood_group_cleansed + bedrooms * room_type, 
+                          data = airbnbtest)
+
+glance(airbnb_int_test_fit) |>
+    select(r.squared, adj.r.squared)
+
+rmse(aug_airbnb_test, truth = log_price, estimate = predictions)
+
+```
 
 ```{r}
 #| label: drop-in-deviance
