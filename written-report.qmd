@@ -233,12 +233,6 @@ The results from the drop in deviance test also support this, as the p-value is 
 ```{r}
 #| label: check-multicollinearity
 
-vif(airbnb_fit) |>
-  as.data.frame() |>
-  `colnames<-`("VIF") |>
-  tibble::rownames_to_column("Predictor") |>
-  kable(digits = 3, caption = "VIF Values for Model Without Interaction")
-
 vif(airbnb_fit_interaction) |>
   as.data.frame() |>
   `colnames<-`("VIF") |>
