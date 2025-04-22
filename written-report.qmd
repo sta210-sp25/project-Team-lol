@@ -221,6 +221,20 @@ glance(airbnb_fit_interaction) |>
 The model that includes the interaction effect between bedrooms and room type seems to perform slightly better, with higher $R^2$ and adjusted $R^2$ values of 0.391 and 0.39, respectively. To further validate this, we wanted to conducted a drop in deviance test to see if there was a difference between the two models' performance.
 
 ```{r}
+#| label: drop-in-deviance
+
+dropdev <- anova(airbnb_fit, airbnb_fit_interaction, test = "Chisq") |>
+  kable(digits = 3, , caption = "Drop in Deviance Test")
+
+dropdev
+
+```
+
+The results from the drop in deviance test also support this, as the p-value is less than the threshold, indicating that including the interaction effect is able to significantly improve the model's ability to explain variation in log price. As a result, we decided to select the model with the interaction effect as our final model.
+
+We then fit our final model on the testing data to see how it performed and calculated the RMSE and $r^2$ values.
+
+```{r}
 #| label: modelfit-test
 
 # fitting selected interactions model on testing data
@@ -235,23 +249,13 @@ airbnb_int_test_fit <- lm(log_price ~ bedrooms + room_type + review_scores_ratin
                           data = airbnbtest)
 
 glance(airbnb_int_test_fit) |>
-    select(r.squared, adj.r.squared)
+    select(r.squared, adj.r.squared) |>
+  kable(digits = 3)
 
-rmse(aug_airbnb_test, truth = log_price, estimate = predictions)
-
-```
-
-```{r}
-#| label: drop-in-deviance
-
-dropdev <- anova(airbnb_fit, airbnb_fit_interaction, test = "Chisq") |>
-  kable(digits = 3, , caption = "Drop in Deviance Test")
-
-dropdev
+rmse(aug_airbnb_test, truth = log_price, estimate = predictions) |>
+  kable(digits = 3)
 
 ```
-
-The results from the drop in deviance test also support this, as the p-value is less than the threshold, indicating that including the interaction effect is able to significantly improve the model's ability to explain variation in log price. As a result, we decided to select the model with the interaction effect as our final model.
 
 ```{r}
 #| label: check-multicollinearity
