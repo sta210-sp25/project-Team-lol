@@ -42,7 +42,7 @@ Understanding the determinants of Airbnb pricing in New York City is crucial for
 ### Response Variable - Price
 
 ```{r}
-#| label: figure-02
+#| label: price-dist
 tidy(summary(airbnb$price)) |>
   kable(digits = 3, caption = "Price Distribution Summary")
 ```
@@ -50,7 +50,7 @@ tidy(summary(airbnb$price)) |>
 The distribution is pretty heavily right skewed. There is an outlier at \$20,000 that impacts the mean, since the median of \$140 is quite a bit less than the mean of around \$213.84, and the mean is roughly equal to the 3rd quartile which is also around \$240. The second highest price value is less than \$1,000. We have removed this outlier for our analysis.
 
 ```{r}
-#| label: figure-03
+#| label: price-hist
 #| fig-height: 2.75
 
 airbnb <- airbnb |>
@@ -78,7 +78,7 @@ airbnb <- airbnb |>
 ```
 
 ```{r}
-#| label: figure-07.5
+#| label: reviewscore-hist
 #| fig-height: 2.75
 #| echo: false
 
@@ -97,7 +97,7 @@ The distribution of review scores is skewed left after the transformation, with 
 ### Response (Price) vs Predictor Variable (review scores)
 
 ```{r}
-#| label: figure-13
+#| label: price-revscore
 #| fig-height: 2.5
 
 ggplot(airbnb, aes(x = review_scores_rating, y = price)) +
@@ -111,7 +111,7 @@ ggplot(airbnb, aes(x = review_scores_rating, y = price)) +
 This scatter plot shows the relationship between price and review scores. However, it looks a little problematic and hard to interpret because high data density at certain score levels, especially between 4 and 5. Since the price variable is highly skewed, we applied a log transformation to try to help spread out values and make trends more visible.
 
 ```{r}
-#| label: figure-14
+#| label: log-price-revscore
 #| fig-height: 2.5
 
 airbnb <- airbnb |>
@@ -131,7 +131,7 @@ The majority of listings have review scores between 4 and 5, this shows that mos
 ### Bedrooms and Room Type
 
 ```{r}
-#| label: figure-19
+#| label: int-effects
 #| fig-height: 2.5
 #| warning: FALSE
 #| echo: FALSE
@@ -158,7 +158,7 @@ We chose to build a multiple linear regression model, as we wanted to use multip
 To build the model, we kept used the log transformed price as the response variable due to our findings from the EDA above. The predictor variables we included in the model were the number of bedrooms, room type, review score ratings, and neighborhood. We decided to wanted to build a model that did not include the interaction between room type and number of bedrooms (this was the most obvious potential interaction effect from our EDA), and then build a second model that included the interaction and see which one performed better before selecting our final model.
 
 ```{r}
-#| label: model-without-interaction
+#| label: no-int-model
 
 # split into train and test sets
 set.seed(210)
