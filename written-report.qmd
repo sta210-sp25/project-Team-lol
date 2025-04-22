@@ -158,7 +158,7 @@ We chose to build a multiple linear regression model, as we wanted to use multip
 To build the model, we kept used the log transformed price as the response variable due to our findings from the EDA above. The predictor variables we included in the model were the number of bedrooms, room type, review score ratings, and neighborhood. We decided to wanted to build a model that did not include the interaction between room type and number of bedrooms (this was the most obvious potential interaction effect from our EDA), and then build a second model that included the interaction and see which one performed better before selecting our final model.
 
 ```{r}
-#| label: no-int-model
+#| label: split-data
 
 # split into train and test sets
 set.seed(210)
@@ -169,22 +169,11 @@ airbnb_train <- training(airbnb_split)
 airbnb_test <- testing(airbnb_split)
 dim(airbnb_test)
 
-# fit using train data
 airbnb_fit <- lm(log_price ~ bedrooms + room_type + review_scores_rating 
-                           + neighbourhood_group_cleansed, data = airbnb_train)
-
-tidy(airbnb_fit) |>
-  kable(digits = 3, caption = "Model Without Interaction Term")
-```
-
-```{r}
-#| label: model-interaction
+                + neighbourhood_group_cleansed, data = airbnb_train)
 
 airbnb_fit_interaction <- lm(log_price ~ bedrooms + room_type + review_scores_rating 
                            + neighbourhood_group_cleansed + bedrooms * room_type, data = airbnb_train)
-
-tidy(airbnb_fit_interaction) |>
-  kable(digits = 3, caption = "Model With Interaction Term")
 ```
 
 ```{r}
@@ -254,7 +243,7 @@ vif(airbnb_fit_interaction) |>
   as.data.frame() |>
   `colnames<-`("VIF") |>
   tibble::rownames_to_column("Predictor") |>
-  kable(digits = 3, , caption = "VIF Values for Model Without Interaction")
+  kable(digits = 3, , caption = "VIF Values for Model With Interaction")
 
 ```
 
@@ -281,7 +270,7 @@ ggplot(augment(airbnb_fit_interaction), aes(.fitted, .resid)) +
        y = "Residuals")
 ```
 
-According to the residual plot, the residuals are centered around 0, which suggests that linearity is satisfied. However, there is a mild violation equal variance because there’s a slight funnel shape – residuals seem more spread out at lower fitted values and slightly tighter at higher fitted values. There are also few vertical lines of the residuals, indicating discrete fitted values, likely due to categorical variables like room type or neighborhood.
+According to the residual plot, the residuals are centered around 0, which suggests that linearity is satisfied. However, there is a mild violation of equal variance because there’s a slight funnel shape – residuals seem more spread out at lower fitted values and slightly tighter at higher fitted values. There are also few vertical lines of the residuals, indicating discrete fitted values, likely due to categorical variables like room type or neighborhood.
 
 We do not need to be concerned about data normality because our dataset has more than 10,000 data points, which is large enough (n \> 30) to satisfy the normality assumption.
 
@@ -309,6 +298,13 @@ We used Cook’s Distance to assess whether any individual observations had an u
 ### Model Fit Statistics
 
 To evaluate how well our model explains variation in Airbnb listing prices, we compared two multiple linear regression models: one without and one with interaction terms between room type and number of bedrooms. The final model we chose is the model includes the interaction effects, which shows slightly better performance based on both the r-squared ($R^2 = 0.391$ , $Adj \space R^2 = 0.390$). These values indicate that approximately 39% of the variability in log-transformed Airbnb prices is explained by our model, which includes predictors such as room type, number of bedrooms, neighborhood, review scores, and their interactions.
+
+```{r}
+#| label: model-interaction
+
+tidy(airbnb_fit_interaction) |>
+  kable(digits = 3, caption = "Model With Interaction Term")
+```
 
 In our multiple linear regression model, we found that the number of bedrooms has a significant positive effect on price, with each additional bedroom multiplying the expected price by a factor of approximately exp(0.255) or around 1.29 on average for entire home listings. This effect varies depending on room type: in private rooms, the added value of an extra bedroom is reduced, with the factor becoming exp(0.255 − 0.108) or around 1.16, while in shared rooms, the effect is stronger, with the factor increasing to exp(0.255 + 0.251) or around 1.66. Room type also independently influences price — private rooms and shared rooms multiply expected price by factors of exp(−0.316) or around 0.73 and 0.44 or exp(−0.828), respectively, compared to entire homes. Hotel rooms do not differ significantly in price. Review scores show a strong positive relationship with price, where a one point increase in rating multiplies the expected price by exp(0.273) or 1.31. Location effects are also evident: compared to the Bronx, listings in Manhattan, Brooklyn, and Queens multiply expected price by factors of exp(0.497) or 1.64, exp(0.253) or 1.29, and exp(0.089) or 1.09, respectively. Staten Island does not show a statistically significant difference from the Bronx.
 
