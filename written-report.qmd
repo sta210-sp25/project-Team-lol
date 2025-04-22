@@ -346,3 +346,5 @@ Our analysis has several limitations. First, the model does not include other po
 Our analysis also had some validity concerns. First, our results may not generalize to Airbnb listings in other cities, to long-term rentals, or to future time periods if market dynamic change. Furthermore, Inside Airbnb data is scraped from Airbnb's website and not directly from Airbnb, so there could be inconsistencies or missing listings. For example, many listings had no prices, but inputting a price is necessary to put up a listing on Airbnb.
 
 Future work should include additional predictors like amenities (Wi-Fi, kitchen, pool, etc.), cancellation policies, host tenure, and photo quality of listings. Furthermore, a time series analysis of listing prices over different seasons and years can generate better insight into pricing dynamics. Finally, future work can examine whether price differences by neighborhood correlate with gentrification, displacement, or housing shortages.
+
+\pagebreak
