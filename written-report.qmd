@@ -160,8 +160,18 @@ To build the model, we kept used the log transformed price as the response varia
 ```{r}
 #| label: model-without-interaction
 
+# split into train and test sets
+set.seed(210)
+airbnb_split <- initial_split(airbnb, prop = 0.80)
+#save training data
+airbnb_train <- training(airbnb_split)
+#save testing data
+airbnb_test <- testing(airbnb_split)
+dim(airbnb_test)
+
+# fit using train data
 airbnb_fit <- lm(log_price ~ bedrooms + room_type + review_scores_rating 
-                           + neighbourhood_group_cleansed, data = airbnb)
+                           + neighbourhood_group_cleansed, data = airbnb_train)
 
 tidy(airbnb_fit) |>
   kable(digits = 3, caption = "Model Without Interaction Term")
@@ -171,10 +181,22 @@ tidy(airbnb_fit) |>
 #| label: model-interaction
 
 airbnb_fit_interaction <- lm(log_price ~ bedrooms + room_type + review_scores_rating 
-                           + neighbourhood_group_cleansed + bedrooms * room_type, data = airbnb)
+                           + neighbourhood_group_cleansed + bedrooms * room_type, data = airbnb_train)
 
 tidy(airbnb_fit_interaction) |>
   kable(digits = 3, caption = "Model With Interaction Term")
+```
+
+```{r}
+#| label: regprice-models
+
+# no interaction
+reg_airbnb_fit <- lm(log_price ~ bedrooms + room_type + review_scores_rating 
+                           + neighbourhood_group_cleansed, data = airbnb_train)
+# interaction
+reg_airbnb_fit_interaction <- lm(price ~ bedrooms + room_type + review_scores_rating 
+                           + neighbourhood_group_cleansed + bedrooms * room_type, data = airbnb_train)
+
 ```
 
 ### Evaluating the Models
@@ -190,6 +212,18 @@ glance(airbnb_fit) |>
 glance(airbnb_fit_interaction) |>
   select(r.squared, adj.r.squared) |>
   kable(digits = 3, caption = "R Squared Values for Model With Interaction")
+
+```
+
+```{r}
+#| label: regularprice-r2
+
+glance(reg_airbnb_fit) |>
+  select(r.squared, adj.r.squared) |>
+  kable(digits = 3, caption = "R Squared Values for Model Without Interaction (Regular Price)")
+glance(reg_airbnb_fit_interaction) |>
+  select(r.squared, adj.r.squared) |>
+  kable(digits = 3, caption = "R Squared Values for Model With Interaction (Regular Price)")
 
 ```
 
