@@ -153,9 +153,9 @@ Based on the graph, it appears that the rate at which price increases per number
 
 ## Methodology
 
-We chose to build a multiple linear regression model, as we wanted to use multiple explanatory variables to predict our continuous response variable: airbnb price.
+We chose to build a multiple linear regression model, as we wanted to use multiple explanatory variables to predict our continuous response variable: Airbnb price.
 
-To build the model, we kept used the log transformed price as the response variable due to our findings from the EDA above. The predictor variables we included in the model were the number of bedrooms, room type, review score ratings, and neighborhood. We decided to wanted to build a model that did not include the interaction between room type and number of bedrooms (this was the most obvious potential interaction effect from our EDA), and then build a second model that included the interaction and see which one performed better before selecting our final model.
+To build the model, we kept used the log transformed price as the response variable due to our findings from the EDA above. The predictor variables we included in the model were the number of bedrooms, room type, review score ratings, and neighborhood. We decided to wanted to build a model that did not include the interaction between room type and number of bedrooms (this was the most obvious potential interaction effect from our EDA compared to the other ones we looked at), and then build a second model that included the interaction and see which one performed better before selecting our final model.
 
 ```{r}
 #| label: split-data
@@ -189,7 +189,7 @@ reg_airbnb_fit_interaction <- lm(price ~ bedrooms + room_type + review_scores_ra
 
 ### Evaluating the Models
 
-To evaluate both models' performance, we decided to take a look at their $r^2$ and adjusted $r^2$ values to see which model had higher values.
+To evaluate both models' performance, we decided to take a look at their $R^2$ and adjusted $R^2$ values to see which model had higher values.
 
 ```{r}
 #| label: r2-values
@@ -205,19 +205,20 @@ glance(airbnb_fit_interaction) |>
 
 ```{r}
 #| label: regularprice-r2
+#| eval: false
 
 
-#glance(reg_airbnb_fit) |>
-  #select(r.squared, adj.r.squared) |>
-  #kable(digits = 3, caption = "R Squared Values for Model Without Interaction (Regular Price)")
-#glance(reg_airbnb_fit_interaction) |>
-  #select(r.squared, adj.r.squared) |>
-  #kable(digits = 3, caption = "R Squared Values for Model With Interaction (Regular Price)")
+glance(reg_airbnb_fit) |>
+  select(r.squared, adj.r.squared) |>
+  kable(digits = 3, caption = "R Squared Values for Model Without Interaction (Regular Price)")
+glance(reg_airbnb_fit_interaction) |>
+  select(r.squared, adj.r.squared) |>
+  kable(digits = 3, caption = "R Squared Values for Model With Interaction (Regular Price)")
 
 
 ```
 
-The model that includes the interaction effect between bedrooms and room type seems to perform slightly better, with higher $R^2$ and adjusted $R^2$ values of 0.391 and 0.39, respectively. To further validate this, we wanted to conducted a drop in deviance test to see if there was a difference between the two models' performance.
+The model that includes the interaction effect between bedrooms and room type seems to perform slightly better, with higher $R^2$ and adjusted $R^2$ values of 0.396 and 0.395, respectively. To further validate this, we wanted to conducted a drop in deviance test to see if there was a difference between the two models' performance.
 
 ```{r}
 #| label: drop-in-deviance
@@ -231,7 +232,7 @@ dropdev
 
 The results from the drop in deviance test also support this, as the p-value is less than the threshold, indicating that including the interaction effect is able to significantly improve the model's ability to explain variation in log price. As a result, we decided to select the model with the interaction effect as our final model.
 
-We then fit our final model on the testing data to see how it performed and calculated the RMSE and $r^2$ values.
+We then fit our final model on the testing data to see how it performed and calculated the RMSE and $R^2$ values.
 
 ```{r}
 #| label: modelfit-test
@@ -249,12 +250,14 @@ airbnb_int_test_fit <- lm(log_price ~ bedrooms + room_type + review_scores_ratin
 
 glance(airbnb_int_test_fit) |>
     select(r.squared, adj.r.squared) |>
-  kable(digits = 3)
+  kable(digits = 3, caption = "Testing Data R Squared Values")
 
 rmse(aug_airbnb_test, truth = log_price, estimate = predictions) |>
-  kable(digits = 3)
+  kable(digits = 3, caption = "Testing Data RMSE Value")
 
 ```
+
+The model returns a final $R^2$ value of 0.373 and an RMSE value of 173.219, which show that the model has relatively low predictive power.
 
 ```{r}
 #| label: check-multicollinearity
@@ -290,7 +293,7 @@ ggplot(augment(airbnb_fit_interaction), aes(.fitted, .resid)) +
        y = "Residuals")
 ```
 
-According to the residual plot, the residuals are centered around 0, which suggests that linearity is satisfied. However, there is a mild violation of equal variance because there’s a slight funnel shape – residuals seem more spread out at lower fitted values and slightly tighter at higher fitted values. There are also few vertical lines of the residuals, indicating discrete fitted values, likely due to categorical variables like room type or neighborhood.
+According to the residual plot, the residuals are centered around 0, which suggests that linearity is satisfied. However, there is a mild violation of equal variance because there’s a slight funnel shape – residuals seem more spread out at lower fitted values and slightly tighter at higher fitted values.
 
 We do not need to be concerned about data normality because our dataset has more than 10,000 data points, which is large enough (n \> 30) to satisfy the normality assumption.
 
@@ -317,7 +320,7 @@ We used Cook’s Distance to assess whether any individual observations had an u
 
 ### Model Fit Statistics
 
-To evaluate how well our model explains variation in Airbnb listing prices, we compared two multiple linear regression models: one without and one with interaction terms between room type and number of bedrooms. The final model we chose is the model includes the interaction effects, which shows slightly better performance based on both the r-squared ($R^2 = 0.391$ , $Adj \space R^2 = 0.390$). These values indicate that approximately 39% of the variability in log-transformed Airbnb prices is explained by our model, which includes predictors such as room type, number of bedrooms, neighborhood, review scores, and their interactions.
+To evaluate how well our model explains variation in Airbnb listing prices, we compared two multiple linear regression models: one without and one with interaction terms between room type and number of bedrooms. The final model we chose is the model includes the interaction effects, which shows slightly better performance based on both the r-squared ($R^2 = 0.373$ , $Adj \space R^2 = 0.370$). These values indicate that approximately 37.3% of the variability in log-transformed Airbnb prices is explained by our model, which includes predictors such as room type, number of bedrooms, neighborhood, review scores, and their interactions.
 
 ```{r}
 #| label: model-interaction
@@ -330,7 +333,7 @@ In our multiple linear regression model, we found that the number of bedrooms ha
 
 Additionally, we conducted a drop-in-deviance test to validate the improvement from including the interaction terms. According to the results we got, the full model provides a statistically significant improvement in explaining the variability in the price because it has a p-value smaller than 0.001.
 
-While the r-squared is moderate, this is under our expectation given the complexity and variability in Airbnb pricing. Other unobserved factors (such as amenities, host reputation, seasonal demand, or listing descriptions) likely contribute to price fluctuations and are not captured in this dataset.
+While the $R^2$ is moderately low, this is expected given the complexity and variability in Airbnb pricing. Other unobserved factors (such as amenities, host reputation, seasonal demand, or listing descriptions) likely contribute to price fluctuations and are not captured in this dataset.
 
 ## Discussion + Conclusion
 
